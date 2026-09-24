@@ -1,5 +1,7 @@
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/src/css/index.sass'
+import './styles/fonts.css'
+import './styles/global.scss'
 
 import ptBR from 'quasar/lang/pt-BR'
 import { createPinia } from 'pinia'

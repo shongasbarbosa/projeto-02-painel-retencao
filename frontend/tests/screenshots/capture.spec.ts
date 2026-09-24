@@ -38,7 +38,10 @@ test.describe('Painel de Retenção — screenshots (modo demo)', () => {
     await login(page)
     await page.getByRole('tab', { name: 'Contato' }).first().click()
     await page.waitForSelector('table tbody tr')
-    await page.getByRole('button', { name: /Registrar contato com/ }).first().click()
+    await page
+      .getByRole('button', { name: /Registrar contato com/ })
+      .first()
+      .click()
     await expect(page.getByText('Registrar contato —')).toBeVisible()
     await page.screenshot({ path: `${SHOTS_DIR}/04-contato-dialogo.png` })
   })

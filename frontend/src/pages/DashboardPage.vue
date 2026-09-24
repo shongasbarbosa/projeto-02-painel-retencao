@@ -3,9 +3,11 @@ import type { EChartsOption } from 'echarts'
 import { computed, onMounted, ref, watch } from 'vue'
 
 import EChart from '@/components/EChart.vue'
+import { useTheme } from '@/composables/useTheme'
 import { useRetentionStore } from '@/stores/retention'
 
 const store = useRetentionStore()
+const { isDark } = useTheme()
 const selectedCourseId = ref<number | null>(null)
 
 const courseOptions = computed(() => [
@@ -61,6 +63,13 @@ const riskDistributionOption = computed<EChartsOption>(() => {
       {
         type: 'pie',
         radius: ['45%', '70%'],
+        label: {
+          color: isDark.value ? '#e5e7eb' : '#1f2937',
+          textBorderWidth: 0,
+        },
+        labelLine: {
+          lineStyle: { color: isDark.value ? '#6b7280' : '#9ca3af' },
+        },
         data: [
           { name: 'Baixo risco', value: counts.baixo, itemStyle: { color: '#16a34a' } },
           { name: 'Médio risco', value: counts.medio, itemStyle: { color: '#d97706' } },

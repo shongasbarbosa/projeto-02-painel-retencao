@@ -22,19 +22,19 @@ async function handleSubmit() {
 <template>
   <q-page class="flex flex-center login-page">
     <q-card class="login-card" flat bordered>
-      <q-card-section>
-        <div class="text-h5 q-mb-xs">Painel de Retenção</div>
-        <div class="text-caption text-grey-7">
-          Acompanhe o risco de evasão e priorize contatos de tutoria.
+      <q-card-section class="login-card__section">
+        <div class="login-card__header">
+          <div class="text-h5">Painel de Retenção</div>
+          <div class="text-caption text-grey-7">
+            Acompanhe o risco de evasão e priorize contatos de tutoria.
+          </div>
         </div>
-      </q-card-section>
 
-      <div v-if="isDemoMode" class="demo-notice q-mx-md q-mb-sm" role="status">
-        Modo demonstração: dados fictícios, sem backend. Login já preenchido.
-      </div>
+        <div v-if="isDemoMode" class="demo-notice" role="status">
+          Modo demonstração: dados fictícios, sem backend. Login já preenchido.
+        </div>
 
-      <q-card-section>
-        <q-form class="q-gutter-md" @submit.prevent="handleSubmit">
+        <q-form class="login-card__form" @submit.prevent="handleSubmit">
           <q-input
             v-model="email"
             type="email"
@@ -58,7 +58,7 @@ async function handleSubmit() {
             type="submit"
             label="Entrar"
             color="primary"
-            class="full-width"
+            class="full-width login-card__submit"
             :loading="auth.loading"
             no-caps
           />
@@ -79,11 +79,36 @@ async function handleSubmit() {
   max-width: 420px;
 }
 
+.login-card__section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px 24px;
+}
+
+.login-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.login-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-card__submit {
+  margin-top: 4px;
+}
+
 .demo-notice {
   background: rgba(37, 99, 235, 0.1);
   color: inherit;
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 0.85rem;
+  text-align: center;
 }
 </style>

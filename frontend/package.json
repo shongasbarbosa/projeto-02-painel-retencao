@@ -16,6 +16,7 @@
     "test:e2e:api": "playwright test -c playwright.e2e.config.ts --project=real-api"
   },
   "dependencies": {
+    "@fontsource/google-sans": "^5.3.1",
     "@quasar/extras": "^1.16.14",
     "axios": "^1.7.7",
     "echarts": "^5.5.1",

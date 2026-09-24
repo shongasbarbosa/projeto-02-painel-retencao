@@ -4,15 +4,17 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { useTheme } from '@/composables/useTheme'
 
+const FONT_FAMILY = "'Google Sans', -apple-system, BlinkMacSystemFont, Roboto, sans-serif"
+
 // Tema customizado (em vez do tema 'dark' embutido do ECharts) para que o
 // fundo do gráfico seja transparente e combine com o card do Quasar, e para
 // que o texto tenha contraste adequado no escuro.
 echarts.registerTheme('app-dark', {
   backgroundColor: 'transparent',
-  textStyle: { color: '#e5e7eb' },
-  title: { textStyle: { color: '#e5e7eb' } },
-  legend: { textStyle: { color: '#e5e7eb' } },
-  tooltip: { backgroundColor: '#1f2937', textStyle: { color: '#e5e7eb' } },
+  textStyle: { color: '#e5e7eb', fontFamily: FONT_FAMILY },
+  title: { textStyle: { color: '#e5e7eb', fontFamily: FONT_FAMILY } },
+  legend: { textStyle: { color: '#e5e7eb', fontFamily: FONT_FAMILY } },
+  tooltip: { backgroundColor: '#1f2937', textStyle: { color: '#e5e7eb', fontFamily: FONT_FAMILY } },
 })
 
 const props = defineProps<{
@@ -26,11 +28,19 @@ const containerRef = ref<HTMLDivElement>()
 let chart: echarts.ECharts | null = null
 let resizeObserver: ResizeObserver | null = null
 
+function mergedOption(): echarts.EChartsOption {
+  return {
+    animation: false,
+    ...props.option,
+    textStyle: { fontFamily: FONT_FAMILY, ...props.option.textStyle },
+  }
+}
+
 function render() {
   if (!containerRef.value) return
   chart?.dispose()
   chart = echarts.init(containerRef.value, isDark.value ? 'app-dark' : undefined)
-  chart.setOption({ animation: false, ...props.option })
+  chart.setOption(mergedOption())
 }
 
 onMounted(() => {
@@ -42,7 +52,7 @@ onMounted(() => {
 watch(isDark, render)
 watch(
   () => props.option,
-  () => chart?.setOption({ animation: false, ...props.option }),
+  () => chart?.setOption(mergedOption()),
   { deep: true },
 )
 
