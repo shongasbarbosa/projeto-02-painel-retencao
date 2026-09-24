@@ -1,0 +1,30 @@
+# Ambiente
+.env
+!.env.example
+!frontend/.env.demo
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+backend/.env
+
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Testes e relatórios
+test-results/
+playwright-report/
+coverage/
+
+# Editores e SO
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
