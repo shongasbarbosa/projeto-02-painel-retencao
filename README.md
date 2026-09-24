@@ -213,37 +213,64 @@ curl "http://localhost:8000/api/reports/risk-score?level=alto" \
 ]
 ```
 
-## Status de validação
+## Qualidade e testes
 
-O que foi de fato executado e verificado nesta máquina, nesta versão do
-projeto:
+**Backend.** A suíte roda com `pytest` contra um PostgreSQL 16 real (não
+SQLite), para que o comportamento de enums, timestamps com timezone e
+constraints seja o mesmo do ambiente de produção. Ela cobre:
 
-- Backend: `ruff check`, `ruff format --check` e `pytest` (29 testes)
-  passando contra um PostgreSQL 16 real (não SQLite).
-- Migration `0001` conferida com `alembic revision --autogenerate`: sem
-  diferenças em relação aos modelos (schema e migration batem).
-- Seed rodado duas vezes seguidas: idempotente (a segunda execução não
-  cria registros novos) e exporta `frontend/src/demo-data/seed.json` com
-  dados reais (300 matrículas, 3 cursos).
-- `docker compose up --build` de ponta a ponta: os três serviços sobem,
-  a API roda migration + seed automaticamente, e os fluxos de login,
-  dashboard, lista de contato (registro de contato incluso), comparação
-  e exportação CSV foram testados via `/docs` e via o frontend em
-  `localhost:8080`.
-- Frontend: `eslint`, `vue-tsc`, `vitest` (15 testes) e build de produção
-  passando; build em modo demonstração com o `seed.json` real e
-  `npm run screenshots` gerando os 7 prints em `docs/screenshots`
-  (revisados manualmente; dois problemas visuais encontrados e corrigidos:
-  paginação da tabela em inglês e o gráfico de rosca quebrando ao trocar
-  de tema).
-- Build com `--base=/projeto-02-painel-retencao/` servido localmente:
-  `index.html` e `favicon.svg` carregam corretamente com o prefixo de
-  caminho do GitHub Pages.
+- a regra de score de risco (limites das faixas, saturação da
+  inatividade em 30 dias);
+- autenticação e permissões (login inválido, endpoints protegidos sem
+  token ou com token inválido);
+- os relatórios de funil, score de risco e comparação entre turmas;
+- o fluxo de matrícula e de registro/consulta de contatos.
 
-O que **não** foi validado nesta máquina: o deploy real no GitHub Pages e
-a criação do repositório, que dependem de confirmação antes de serem
-feitos — depois de publicados, os badges de CI e Deploy acima passam a
-refletir o resultado real dos workflows.
+`ruff check` e `ruff format --check` rodam junto, garantindo lint e
+formatação consistentes.
+
+**Migration.** A migration `0001` é conferida contra os modelos com
+`alembic revision --autogenerate`: se o schema criado pela migration
+divergir dos modelos SQLAlchemy, esse comando gera uma revisão não-vazia
+apontando a diferença. Uma migration vazia confirma que os dois batem.
+
+**Seed.** O script (`backend/scripts/seed.py`) não cria tabelas — ele
+exige que a migration já tenha rodado, e falha com uma mensagem clara
+orientando `alembic upgrade head` caso contrário. É idempotente: rodar
+duas vezes seguidas não duplica alunos, matrículas nem atividades, e a
+cada execução reexporta `frontend/src/demo-data/seed.json` com o estado
+atual do banco (não apenas os registros criados naquela execução), para
+que o modo demonstração do frontend sempre reflita os dados reais.
+
+**Ponta a ponta com Docker.** Um único `docker compose up --build` aplica
+a migration e roda o seed automaticamente antes de subir a API (ver
+`backend/docker-entrypoint.sh`). Esse fluxo é testado do zero (`docker
+compose down -v` seguido de `docker compose up --build`), cobrindo
+health check, login, dashboard, lista de contato com registro de
+contato, comparação entre turmas e exportação CSV, tanto via `/docs`
+quanto via o frontend.
+
+**Frontend.** `eslint`, `vue-tsc` e `vitest` cobrem a regra de score
+replicada no cliente e a camada de serviço do modo demonstração (login,
+funil, ordenação por risco, registro de contato em memória). O build de
+produção e o build em modo demonstração (com `--base` apontando para o
+GitHub Pages) são verificados, assim como as telas via
+`npm run screenshots` (Playwright), com os prints revisados manualmente
+em `docs/screenshots`.
+
+## CI/CD
+
+A cada push ou pull request para `main`, o workflow de CI
+(`.github/workflows/ci.yml`) roda dois jobs em paralelo:
+
+- **backend**: sobe um PostgreSQL como service container, instala as
+  dependências, roda `ruff check`, `ruff format --check` e `pytest`;
+- **frontend**: instala as dependências, roda `eslint`, `vue-tsc`,
+  `vitest` e o build de produção.
+
+O deploy (`.github/workflows/deploy-pages.yml`) builda o frontend em modo
+demonstração com o `base` do GitHub Pages e publica em
+`shongasbarbosa.github.io/projeto-02-painel-retencao`.
 
 ## Como rodar com Docker
 
