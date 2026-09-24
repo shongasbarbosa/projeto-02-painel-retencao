@@ -12,9 +12,10 @@ import random
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from sqlalchemy import inspect
+
 from app.core.config import settings
 from app.core.security import hash_password
-from app.db.base import Base
 from app.db.session import SessionLocal, engine
 from app.models.models import (
     Activity,
@@ -241,7 +242,12 @@ def build_export_payload(db, courses: list[Course]) -> dict:
 
 
 def main() -> None:
-    Base.metadata.create_all(bind=engine)
+    if not inspect(engine).has_table("users"):
+        raise RuntimeError(
+            "As tabelas do banco ainda não existem. Rode 'alembic upgrade head' "
+            "antes de executar o seed."
+        )
+
     db = SessionLocal()
     try:
         get_or_create_demo_user(db)
