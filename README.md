@@ -59,6 +59,18 @@ soltos do Moodle, o que é lento e inconsistente entre turmas.
   `python-jose` está com manutenção mais lenta; `PyJWT` é a biblioteca
   citada nos exemplos oficiais de autenticação JWT do FastAPI.
 
+## Decisões técnicas do frontend
+
+- **Tipografia**: [Google Sans](https://fonts.google.com/specimen/Google+Sans),
+  liberada pelo Google sob SIL Open Font License em dezembro de 2025 —
+  antes disso a fonte era proprietária, então essa escolha só foi possível
+  a partir dessa liberação. A fonte é auto-hospedada via
+  [`@fontsource/google-sans`](https://www.npmjs.com/package/@fontsource/google-sans)
+  (sem requisições ao Google Fonts em tempo de execução), carregando
+  apenas os pesos 400/500/600/700 do subset latin, que é o que a interface
+  usa. Aplicada globalmente (variável `$typography-font-family` do Quasar
+  e `--font-family-base` em CSS) e também nos textos do ECharts.
+
 ## Arquitetura
 
 ```mermaid
@@ -321,6 +333,14 @@ npm ci
 npm run lint
 npx vue-tsc -b
 npm run test
+```
+
+Testes de ponta a ponta (Playwright) do fluxo de login/logout, separados
+dos screenshots:
+
+```bash
+npm run test:e2e:demo   # contra o build em modo demonstração
+npm run test:e2e:api    # contra a API real (precisa do docker compose up)
 ```
 
 ## Modo demonstração vs. API real
