@@ -11,7 +11,9 @@
     "format": "prettier --write \"src/**/*.{ts,vue,css}\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "screenshots": "playwright test -c playwright.config.ts"
+    "screenshots": "playwright test -c playwright.config.ts",
+    "test:e2e:demo": "playwright test -c playwright.e2e.config.ts --project=demo-mode",
+    "test:e2e:api": "playwright test -c playwright.e2e.config.ts --project=real-api"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.14",

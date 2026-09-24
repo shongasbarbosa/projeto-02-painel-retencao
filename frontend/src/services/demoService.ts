@@ -98,6 +98,7 @@ export function createDemoService(): RetentionService {
 
     logout() {
       localStorage.removeItem('painel-retencao-demo-auth')
+      contactLogs.length = 0
     },
 
     isAuthenticated() {

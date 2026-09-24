@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import { isDemoMode } from '@/services'
@@ -8,11 +8,13 @@ import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 const route = useRoute()
+const router = useRouter()
 
 const showHeader = computed(() => route.name !== 'login')
 
 function handleLogout() {
   auth.logout()
+  router.replace({ name: 'login' })
 }
 </script>
 
@@ -20,7 +22,7 @@ function handleLogout() {
   <q-layout view="hHh lpR fFf">
     <q-header v-if="showHeader" elevated>
       <q-toolbar>
-        <q-toolbar-title>
+        <q-toolbar-title class="header-title">
           <router-link to="/" class="header-link">Painel de Retenção</router-link>
         </q-toolbar-title>
 
@@ -53,14 +55,21 @@ function handleLogout() {
 </template>
 
 <style scoped>
+.header-title {
+  padding-left: 16px;
+}
+
 .header-link {
   color: inherit;
   text-decoration: none;
 }
 
 .demo-banner {
+  /* Contraste conferido nos dois temas (a cor de fundo não muda com o
+     tema): #d97706 com texto preto em negrito dá ~6,6:1, acima do AA. */
   background: var(--q-warning);
-  color: #1a1a1a;
+  color: #000;
+  font-weight: 600;
   text-align: center;
   font-size: 0.85rem;
   padding: 4px 8px;
