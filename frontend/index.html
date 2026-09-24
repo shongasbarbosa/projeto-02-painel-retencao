@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Painel de Retenção: identifique alunos em risco de evasão, priorize contatos de tutoria e compare turmas em uma plataforma de EaD."
+    />
+    <title>Painel de Retenção</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Aplica o tema salvo antes do app carregar, evitando flash de tema errado.
+      (function () {
+        try {
+          var saved = localStorage.getItem('painel-retencao-theme')
+          var isDark
+          if (saved === 'dark') {
+            isDark = true
+          } else if (saved === 'light') {
+            isDark = false
+          } else {
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          }
+          document.documentElement.classList.add(isDark ? 'body--dark' : 'body--light')
+        } catch (e) {
+          document.documentElement.classList.add('body--light')
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
